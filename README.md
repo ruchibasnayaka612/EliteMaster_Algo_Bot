@@ -1,26 +1,34 @@
-# Ruchiranga's EliteMaster - Auto-Trading Bot for MT5
+# 🤖 EliteMaster: Automated Institutional Algo-Trading Engine (Python & MT5)
 
-Ruchiranga's EliteMaster is an automated algorithmic trading engine designed for use within the MetaTrader 5 (MT5) trading platform. The system utilizes advanced institutional trading techniques such as Smart Money Concepts (SMC), ICT Fair Value Gaps (FVG), and Volume Profile Analysis to provide a fully automated means of executing high-probability trades within the Foreign Exchange market.
+Ruchiranga's EliteMaster is an automated algorithmic trading engine designed for professional-grade execution within the MetaTrader 5 (MT5) platform. The system leverages advanced concepts like Smart Money Concepts (SMC), ICT Fair Value Gaps (FVG), and Volume Profile Analysis to automate high-probability trade execution in the Forex market.
 
-## Intellectual Property Note
-This repository acts as an open-source portfolio showcase. In order to protect the proprietary components of the trading signals, the specific math used to generate the trade signals, the threshold values, and the specific trigger conditions have been removed from this repository. The main software architecture of the risk management algorithm and the overall structure are included here as an example of my ability to develop trading software with high levels of logic and design.
+## 🎥 Project Showcase
+I have documented the system architecture and live execution of this engine. Watch the project in action:
+**[Watch the EliteMaster System Showcase on YouTube](https://youtu.be/ypDcLLp-pZk)**
 
-## Trading Systems and Signals
-The trading robot monitors 20 different Forex currency pairs that have high volatility. When it identifies a trading opportunity, it executes a trade according to one of the following three distinct institutional strategies:
+## 🛡️ Intellectual Property Note
+This repository serves as an open-source portfolio showcase. To protect proprietary signal generation logic, threshold values, and specific trigger conditions, those components have been abstracted. This repository demonstrates my capability in:
+*   **System Architecture:** Developing robust, multi-threaded trading software.
+*   **Risk Management Algorithms:** Implementing strict, emotionless trade execution logic.
+*   **Data Integration:** Real-time data processing between Python and MT5 terminals.
 
-* **The Trap Hunter strategy (Strategy 2):** Detects fake breakouts and institutional liquidity at important Support/Resistance locations using a custom volume profile Point of Control to confirm the price movement.
-* **The Trend Sniper strategy (Strategy 3):** Executes on 50% pullbacks from an institutional momentum candle only when prices on the longer-duration chart (4 Hours) and the shorter-duration chart (1 Hour) are trending in the same direction with high correlation.
-* **The FVG Filler strategy (Strategy 4):** Detects the re-balancing of Fair Value Gaps after a period of expansion using Fibonacci retracement levels in conjunction with volume metrics to create optimal entries.
+## 📈 Trading Strategies
+The engine monitors 20 high-volatility Forex pairs, identifying opportunities via:
+*   **The Trap Hunter (Strategy 2):** Identifies fake breakouts and institutional liquidity traps using custom Volume Profile Point of Control.
+*   **The Trend Sniper (Strategy 3):** Executes on 50% pullbacks from momentum candles, utilizing cross-timeframe correlation (4H & 1H).
+*   **The FVG Filler (Strategy 4):** Detects institutional re-balancing of Fair Value Gaps using Fibonacci retracement and volume metrics.
 
-## Strict Risk Management
-The execution of trades is completely automated based solely on pre-defined rules, eliminating any emotion associated with executing trades.
+## ⚖️ Strict Risk Management
+The system is built on a "rules-first" philosophy to eliminate emotional bias:
+*   **Trade Cap:** Maximum 3 concurrent active trades.
+*   **Risk Profile:** Fixed 6% account risk per trade.
+*   **Performance:** Targets a 1:3 Risk/Reward ratio.
+*   **Safety Logic:** Stop-loss moves to breakeven at 1:1; 50% volume closure at 1:2 to secure profits.
 
-* Limits maximum active trades to 3.
-* Risks exactly 6% of the account balance per trade.
-* Targets a 1:3 Risk/Reward ratio.
-* Moves stop loss to breakeven at 1:1 and closes 50% of the volume at 1:2 to protect profits.
+## 🚀 How to Explore
+1. Clone this repository: `git clone https://github.com/ruchibasnayaka612/EliteMaster`
+2. Install requirements: `pip install -r requirements.txt`
+3. View core architecture in `EliteMaster_Public.py`.
 
-## How to View/Run
-1. Clone this repository.
-2. Install dependencies via `pip install -r requirements.txt`.
-3. Check `EliteMaster_Public.py` for the core structural logic.
+---
+*Developed by Ruchiranga Basnayaka | [LinkedIn Profile](https://www.linkedin.com/in/ruchiranga-basnayaka/)*
