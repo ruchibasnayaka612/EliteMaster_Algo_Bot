@@ -66,4 +66,4 @@ Active positions are monitored 24/7 by an autonomous dynamic trade management lo
 
 1. **Clone this repository:**
    ```bash
-   git clone [https://github.com/ruchibasnayaka612/EliteMaster_Algo_Bot.git](https://github.com/ruchibasnayaka612/EliteMaster_Algo_Bot.git)
+   git clone https://github.com/ruchibasnayaka612/EliteMaster_Algo_Bot.git
