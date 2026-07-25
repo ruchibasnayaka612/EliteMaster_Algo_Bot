@@ -1,113 +1,134 @@
-# Ruchi's EliteMaster - Auto Trading Bot for MT5
-# Built by Ruchiranga(me). Integrates Smart Money Concepts (SMC), FVG and Volume Profile.
-# Note: I have removed the exact mathematical formulas and threshold values 
-# to protect my strategy logic from being copied. But the core structure 
-# and risk management system are kept here for my portfolio.
+# ==============================================================================
+# Project: EliteMaster Trading Bot (Portfolio Version)
+# Author: Ruchiranga Basnayaka
+# Description: This is a simplified version of my MT5 trading bot for portfolio 
+#              showcase. The main structure and workflow are visible here, but 
+#              the exact math formulas and strategy logic are hidden to protect 
+#              my personal trading edge.
+# ==============================================================================
 
 import MetaTrader5 as mt5
 import pandas as pd
 import numpy as np
 import time
+import json
+import os
+import requests
 
-# Configurations
-TELEGRAM_TOKEN = "YOUR_BOT_TOKEN_HERE"
-CHAT_ID = "YOUR_CHAT_ID_HERE"
+# ==========================================
+# 1. BASIC SETTINGS & RISK LIMITS
+# ==========================================
+MAX_OPEN_TRADES = 3      # Never open more than 3 trades at the same time
+RISK_PER_TRADE = 0.05    # Exactly 5% risk per trade (strict money management)
+DEFAULT_RR = 2.0         # Fallback reward ratio if the target is too close
+STATE_FILE = "data/bot_state.json"  # File to save trade data in case of power cut
 
-# Forex pairs I am scanning
-symbols_list = [
-    "EURUSDm", "GBPUSDm", "USDJPYm", "USDCHFm", "AUDUSDm", 
-    "USDCADm", "NZDUSDm", "USDCNHm", "USDSEKm", "EURGBPm", 
-    "EURJPYm", "EURAUDm", "GBPJPYm", "AUDJPYm", "CHFJPYm",
-    "GBPAUDm", "GBPNZDm", "EURNZDm", "EURCADm", "CADJPYm"
-]
-
-# Risk limits
-max_trades = 3
-risk_per_trade = 6.0  # I risk exactly 6% of account balance per trade
-rr_target = 3.0       # Target is 1:3 Risk/Reward
-
-# Helper Functions
-
-def get_market_data(symbol, timeframe, n_candles):
-    # Fetch OHLCV data from MT5
-    # logic hidden
+# ==========================================
+# 2. POWER CUT / CRASH RECOVERY SYSTEM
+# ==========================================
+def save_bot_state():
+    """
+    Saves active trade details (ticket numbers, stop loss levels, etc.) into a local
+    JSON file. If the PC turns off or MT5 restarts, we don't lose our trade data.
+    """
+    # Note: Exact JSON saving and file handling logic is hidden
     pass
 
-def get_lot_size(symbol, entry, sl):
-    # Calculates exact lot size based on 6% risk of the current account balance
-    # exact math hidden
-    return 0.01 
-
-def manage_active_trades():
-    # Moves SL to breakeven when trade reaches 1:1
-    # Closes 50% of the volume when trade reaches 1:2 to secure profits
-    # logic hidden
+def load_bot_state():
+    """
+    Checks if there is a saved JSON file when the bot starts. If a file exists,
+    it loads the previous trade memory so the bot can continue managing open trades.
+    """
+    # Note: Exact data loading and sync logic is hidden
     pass
 
-# Trading Strategies
+# ==========================================
+# 3. TIME FILTER & TELEGRAM ALERTS
+# ==========================================
+def is_trading_allowed() -> bool:
+    """
+    Stops the bot from opening new trades between 11:00 PM and 7:30 AM.
+    We avoid midnight trading because market spreads get too high.
+    """
+    # Note: Time checking logic is hidden
+    return True
 
-def run_s2_trap_hunter(symbol, df):
-    # Strategy 2: Trap Hunter (Liquidity Sweeps)
-    # Finds fake breakouts at support/resistance using volume profile.
-    
-    # 1. find local swing highs/lows
-    # exact logic hidden
-    liquidity_zones = []
+def send_telegram_alert(message: str):
+    """Sends simple notifications to my phone via Telegram when a trade opens or closes."""
+    # Note: Telegram API connection code is hidden
+    pass
 
-    # 2. check if price swept the zone but candle body closed inside
-    is_swept = False
+# ==========================================
+# 4. LOT SIZE & TRADE MANAGEMENT
+# ==========================================
+def calculate_lot_size(symbol: str, entry_price: float, stop_loss: float) -> float:
+    """
+    Calculates the exact lot size based on our account balance and stop loss distance.
+    This ensures we never risk more than 5% of our account on a single trade.
+    """
+    # Note: Math formulas for tick value and lot calculation are hidden
+    return 0.01
 
-    # 3. check tick volume and POC (Point of Control) to confirm smart money
-    vol_ok = False
+def manage_open_trades():
+    """
+    Smart trade management loop that runs 24/7:
+    1. When profit reaches 1.5x our risk, close 25% of the trade to secure profit, 
+       and move Stop Loss to entry price (Break-Even).
+    2. As price moves further in our favor, trail the Stop Loss to lock in more profit.
+    """
+    # Note: Partial close and Stop Loss trailing logic is hidden
+    pass
 
-    # return signal data
-    return {"signal": None, "entry": 0.0, "sl": 0.0, "tp": 0.0}
+# ==========================================
+# 5. TRADING STRATEGIES
+# ==========================================
+def run_trap_hunter_strategy(symbol: str):
+    """
+    Strategy 1: Trap Hunter (1H / 15M Timeframes)
+    Looks for fake breakouts where retail traders get trapped. We check support/resistance
+    levels and use Volume Profile to confirm where the real money is moving.
+    """
+    # Note: Strategy rules and volume calculation are hidden
+    pass
 
-def run_s3_trend_sniper(symbol, df_1h, df_4h):
-    # Strategy 3: Trend Sniper
-    # Enters on 50% pullback of institutional momentum candles.
-    
-    # 1. check if 1H and 4H trends are matching
-    trend_match = False
+def run_trend_sniper_strategy(symbol: str):
+    """
+    Strategy 2: Trend Sniper (4H / 1H Timeframes)
+    Trades in the direction of the main trend using the 200 EMA. We wait for a healthy 
+    pullback and enter when we see strong momentum candles.
+    """
+    # Note: Trend checking and entry formulas are hidden
+    pass
 
-    # 2. check momentum using ATR
-    has_momentum = False
-    
-    # 3. find entry at dynamic EMA value areas
-    entry_target = 0.0
+def run_fvg_filler_strategy(symbol: str):
+    """
+    Strategy 3: Fair Value Gap (FVG) Filler (4H / 15M Timeframes)
+    Finds market imbalances (gaps left by big bank movements) on the 4H chart and 
+    uses Fibonacci levels on the 15M chart to enter when the gap gets filled.
+    """
+    # Note: Imbalance detection and Fibonacci logic are hidden
+    pass
 
-    return {"signal": None, "entry": 0.0, "sl": 0.0, "tp": 0.0}
-
-def run_s4_fvg_filler(symbol, df):
-    # Strategy 4: ICT FVG Filler
-    # Looks for fair value gaps and uses fibonacci to find entries.
-    
-    # 1. find 3-candle imbalances
-    fvg_found = False
-
-    # 2. calculate mitigation level using volume POC and deep fib retracements
-    entry_target = 0.0
-    
-    return {"signal": None, "entry": 0.0, "sl": 0.0, "tp": 0.0}
-
-# Main Bot Loop
-
+# ==========================================
+# 6. MAIN BOT LOOP (DEMO STRUCTURE)
+# ==========================================
 if __name__ == "__main__":
-    print("Starting Ruchi's EliteMaster Bot (Portfolio Version)...")
-    print("Execution logic is hidden.")
+    print("Starting EliteMaster Trading Bot (Portfolio Demo Version)...")
+    print("Note: Core trading logic is hidden for privacy.")
     
-    # uncomment below to run live
-    # if not mt5.initialize():
-    #     print("MT5 connection failed")
-    # else:
-    #     print("Bot is running...")
+    # This is how the main loop works in the live bot:
+    # 
+    # if mt5.initialize():
+    #     load_bot_state()  # Load saved memory if bot crashed earlier
+    #     
     #     while True:
-    #         if mt5.positions_total() < max_trades:
-    #             for pair in symbols_list:
-    #                 # run_s2_trap_hunter(pair, data)
-    #                 # run_s3_trend_sniper(pair, data_1h, data_4h)
-    #                 # run_s4_fvg_filler(pair, data)
-    #                 pass
-            
-    #         manage_active_trades()
+    #         # 1. Scan for new trades only during allowed hours (7:30 AM - 11:00 PM)
+    #         if mt5.positions_total() < MAX_OPEN_TRADES and is_trading_allowed():
+    #             for pair in ["EURUSDm", "GBPUSDm", "USDJPYm"]:
+    #                 run_trap_hunter_strategy(pair)
+    #                 run_trend_sniper_strategy(pair)
+    #                 run_fvg_filler_strategy(pair)
+    #         
+    #         # 2. Check open trades every minute to secure profits and trail SL
+    #         manage_open_trades()
     #         time.sleep(60)
