@@ -9,7 +9,7 @@ Ruchiranga's **EliteMaster** is an autonomous, quantitative algorithmic trading 
 ## 🎥 Project Showcase
 
 I have documented the system architecture, quantitative logic, and live execution of this engine. Watch the project in action: 
-👉 **[Watch the EliteMaster System Showcase on YouTube](#)** *(Replace with your YouTube Link)*
+👉 **[Watch the EliteMaster System Showcase on YouTube](#)** *https://www.youtube.com/watch?v=ypDcLLp-pZk*
 
 ---
 
