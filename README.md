@@ -1,69 +1,37 @@
-# 🤖 EliteMaster: Automated Institutional Algo-Trading Engine (Python & MT5)
+# EliteMaster Algo Trading Engine (v2.6.1)
 
-**Version 2.2.2 (Ultimate Sniper Architecture + Time Guard + Crash Recovery)**
+A fully autonomous, quantitative trading engine built for MetaTrader 5 using Python. I designed this system to execute trades strictly based on Smart Money Concepts (SMC), Volume Profiling (FRVP), and precise Fibonacci levels, eliminating human emotion from the trading process.
 
-Ruchiranga's **EliteMaster** is an autonomous, quantitative algorithmic trading engine engineered for institutional-grade execution within the MetaTrader 5 (MT5) ecosystem. The system integrates Smart Money Concepts (SMC), Volume Profiling (FRVP), and ICT Fair Value Gaps (FVG) with dynamic multi-phase risk management and fault-tolerant state persistence to automate high-probability trade execution in the Forex market.
-
----
-
-## 🎥 Project Showcase
-
-I have documented the system architecture, quantitative logic, and live execution of this engine. Watch the project in action: 
-👉 **[Watch the EliteMaster System Showcase on YouTube](#)**:- *https://www.youtube.com/watch?v=ypDcLLp-pZk*
+🎥 **Project Showcase:** [Watch the EliteMaster System Showcase on YouTube](https://www.youtube.com/watch?v=ypDcLLp-pZk)
 
 ---
 
-## 🛡️ Intellectual Property & Portfolio Note
-
-This repository serves as an open-source engineering portfolio showcase. To protect proprietary signal generation logic, threshold values, and specific institutional trigger conditions, those core components have been abstracted in `EliteMaster_Public.py`. 
-
-This repository demonstrates my software engineering and quantitative finance capabilities in:
-* **Fault-Tolerant System Architecture:** Developing resilient, multi-threaded trading software with automated crash recovery.
-* **Quantitative Risk Management:** Implementing algorithmic risk guardrails, dynamic lot sizing, and multi-phase trailing logic.
-* **Asynchronous Data Integration:** Real-time OHLCV data processing between Python and MT5 terminals with instant push notifications.
+### 🛡️ Intellectual Property Note
+This repository serves as my open-source engineering portfolio. To protect my proprietary edge, the exact mathematical formulas, volume thresholds, and signal generation logic have been abstracted out of the public code (`EliteMaster_Public.py`). What you see here is the structural architecture and risk management framework.
 
 ---
 
-## ⚙️ Core Capabilities & System Architecture
+### ⚙️ Core Architecture & Features
 
-* **Fault-Tolerant State Persistence (Crash Recovery):** Engineered with real-time local JSON storage (`bot_state.json`). If the system encounters a power outage, network disconnection, or system reboot, the engine autonomously restores exact position memories, partially closed ticket IDs, and trailing states—ensuring zero management lapse on active trades.
-* **Time Guard Execution Filter:** Integrates an automated trading window (**07:30 to 23:00 Server Time**) to prevent algorithmic order execution during low-liquidity, high-spread midnight sessions.
-* **Standalone Deployment:** Compiled into an executable (`.exe`) standalone software, eliminating dependency on IDEs or background Python environments during 24/7 live server execution.
-* **Real-Time Push Notifications:** Connected asynchronously to a Telegram Bot API to deliver instant alerts for order placements, profit securing, zero-risk locks, and smart trailing events.
-* **Execution Logging:** Persists all executed trade parameters into a structured local storage (`Trade_Execution_Log.csv`) for post-trade quantitative analysis.
+* **Crash Recovery (Fault-Tolerant Memory):** The bot continuously saves active trade data to a local `bot_state.json` file. If the VPS restarts, MT5 crashes, or the internet drops, the engine simply wakes up, reads the JSON file, and resumes trailing stops without missing a beat.
+* **Time Guard Filter:** Operates strictly between **07:00 and 23:30 (Server Time)**. I programmed this to intentionally avoid the low-liquidity and high-spread chop during the Asian midnight sessions.
+* **Live Telegram Alerts:** Connected to a custom Telegram Bot API. It sends instant push notifications to my phone whenever a trade opens, hits breakeven, or closes in profit.
 
 ---
 
-## 📈 Algorithmic Trading Strategies
+### 🧠 The 4 Independent Strategies
+Instead of relying on one pattern, the engine runs 4 distinct strategies to adapt to different market conditions:
 
-The engine continuously scans **20 high-volatility Forex & Commodity pairs** across multiple timeframes using a 200 EMA structural trend filter:
-
-* **S2: The Trap Hunter (1H / 15M):** Identifies institutional liquidity sweeps and false breakouts. Utilizes rolling fractals for Break of Structure (BOS) mapping and verifies execution within the Fixed Range Volume Profile (FRVP) Point of Control (POC).
-* **S3: The Trend Sniper (4H / 1H):** Executes on institutional momentum pullbacks aligned with cross-timeframe trend continuity (4H & 1H 200 EMA alignment). Validates high-volume engulfing candles within dynamic value areas.
-* **S4: The FVG Filler (4H / 15M):** Detects institutional re-balancing of 4H Fair Value Gaps (FVG) aligned with the macroeconomic trend. Calculates precise mitigation levels using Fibonacci retracement confluence with volume POCs.
-
----
-
-## ⚖️ Strict Quantitative Risk Management
-
-The system operates on an emotionless, rules-first quantitative architecture designed for strict capital preservation:
-
-* **Global Exposure Cap:** Maximum of **3 concurrent active global positions** (`MAX_GLOBAL_TRADES = 3`) to prevent over-leveraging and margin exhaustion.
-* **Fixed Risk Profile:** Enforces a **strict 5.0% account equity risk** per executed trade. Position sizes are dynamically computed in real-time (`calculate_dynamic_lot`) using live symbol tick values and tick sizes.
-* **Algorithmic RR Guardrails:** Automatically evaluates Fibonacci extension targets before order placement:
-  * **RR < 1:1:** Instantly rejects the trade to prevent negative expectancy.
-  * **1:1 ≤ RR ≤ 1:1.5:** Overrides the target to a safe **1:2 default Risk/Reward fallback**.
-  * **RR > 1:1.5:** Targets the precise **Fibonacci -0.272 institutional extension target**.
-
-### 🎯 Multi-Phase Sniper Trade Manager
-Active positions are monitored 24/7 by an autonomous dynamic trade management loop:
-1. **Phase 1 (Profit Securing & Zero-Risk Lock):** Upon reaching a **1:1.5 Risk/Reward ratio**, the engine automatically liquidates **25% of the position volume** to bank realized profits and immediately modifies the Stop-Loss to Entry (**Break-Even**).
-2. **Phase 2 (Smart Trailing):** As price momentum breaches the **Fibonacci -0.136 extension level**, the Stop-Loss dynamically trails and locks at the **Fibonacci 0.05 safety buffer**, securing maximum trend extraction with zero downside exposure.
+1. **S1: The Reversal Sniper (1H & 15M):** *(New in v2.6)* Scans dual timeframes independently to catch trend exhaustion. It looks for strong momentum shifts (0.8 ATR impulse candles) combined with RSI divergence and Volume Point of Control (POC) to enter at the exact turning point.
+2. **S2: The Trap Hunter (15M):** Identifies where retail traders are getting trapped. It waits for support/resistance fakeouts (liquidity grabs) and enters only when the 200 EMA and volume data confirm the real institutional direction.
+3. **S3: The Trend Sniper (4H / 1H / 15M):** A pure momentum follower. When all three timeframes align, it jumps into strong trends and safely exits exactly 2 pips before the previous swing high/low (Zero-Fib Target).
+4. **S4: The FVG Filler (4H / 15M):** Looks for deep pullbacks. It detects 4H Fair Value Gaps (imbalances) and enters on the 15M chart when price hits the Golden Fibonacci zone (0.382 - 0.618) alongside high volume.
 
 ---
 
-## 🚀 How to Explore
+### ⚖️ Strict Risk & Trade Management
+Active trades are managed 24/7 by a dynamic loop to ensure zero unnecessary losses:
 
-1. **Clone this repository:**
-   ```bash
-   git clone https://github.com/ruchibasnayaka612/EliteMaster_Algo_Bot.git
+* **Fixed 3.5% Risk:** The system dynamically calculates lot sizes based on the account balance and the exact pip distance to the Stop Loss. Risk never exceeds 3.5% per trade.
+* **Phase 1 (Zero-Risk Lock):** As soon as a trade reaches a 1:1.5 Risk/Reward ratio, the bot automatically closes 25% of the position to secure profit and instantly moves the Stop Loss to Entry (Break-Even).
+* **Phase 2 (Smart Fib Trailing):** If the trend continues past the -0.136 Fibonacci extension, the bot trails the Stop Loss safely behind the 0.05 level, locking in maximum gains while giving the trade room to breathe.
