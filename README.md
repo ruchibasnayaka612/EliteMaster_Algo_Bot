@@ -1,4 +1,4 @@
-# EliteMaster Algo Trading Engine (v2.6.1)
+# EliteMaster Algo Trading Engine
 
 A fully autonomous, quantitative trading engine built for MetaTrader 5 using Python. I designed this system to execute trades strictly based on Smart Money Concepts (SMC), Volume Profiling (FRVP), and precise Fibonacci levels, eliminating human emotion from the trading process.
 
