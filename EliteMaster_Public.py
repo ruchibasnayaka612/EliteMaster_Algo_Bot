@@ -1,134 +1,111 @@
-# ==============================================================================
-# Project: EliteMaster Trading Bot (Portfolio Version)
-# Author: Ruchiranga Basnayaka
-# Description: This is a simplified version of my MT5 trading bot for portfolio 
-#              showcase. The main structure and workflow are visible here, but 
-#              the exact math formulas and strategy logic are hidden to protect 
-#              my personal trading edge.
-# ==============================================================================
+# EliteMaster Algo Engine (Public Portfolio Build)
+# Dev: Ruchiranga Basnayaka
+# Note: Proprietary SMC formulas and threshold values are stripped. 
+# This file only demonstrates the execution architecture, state recovery, and risk manager.
 
 import MetaTrader5 as mt5
 import pandas as pd
-import numpy as np
-import time
 import json
-import os
-import requests
 
-# ==========================================
-# 1. BASIC SETTINGS & RISK LIMITS
-# ==========================================
-MAX_OPEN_TRADES = 3      # Never open more than 3 trades at the same time
-RISK_PER_TRADE = 0.05    # Exactly 5% risk per trade (strict money management)
-DEFAULT_RR = 2.0         # Fallback reward ratio if the target is too close
-STATE_FILE = "data/bot_state.json"  # File to save trade data in case of power cut
+RISK_PER_TRADE = 0.035  # strict 3.5% risk per trade
+DEFAULT_RR = 2.0        # fallback rr if dynamic fib target is too close
+STATE_FILE = "data/bot_state.json"  # local mem file for crash recovery
 
-# ==========================================
-# 2. POWER CUT / CRASH RECOVERY SYSTEM
-# ==========================================
+# --- 1. CRASH RECOVERY & MEMORY SYSTEM ---
+
 def save_bot_state():
     """
-    Saves active trade details (ticket numbers, stop loss levels, etc.) into a local
-    JSON file. If the PC turns off or MT5 restarts, we don't lose our trade data.
+    Saves active trade tickets and SL levels into a JSON file.
+    Prevents losing track of running trades if VPS/MT5 restarts.
     """
-    # Note: Exact JSON saving and file handling logic is hidden
+    # Note: Exact JSON dumping logic is hidden
     pass
 
 def load_bot_state():
     """
-    Checks if there is a saved JSON file when the bot starts. If a file exists,
-    it loads the previous trade memory so the bot can continue managing open trades.
+    Called on boot to parse JSON and rebuild trade memory.
+    Allows dynamic manager to resume trailing stops immediately.
     """
-    # Note: Exact data loading and sync logic is hidden
-    pass
-
-# ==========================================
-# 3. TIME FILTER & TELEGRAM ALERTS
-# ==========================================
-def is_trading_allowed() -> bool:
-    """
-    Stops the bot from opening new trades between 11:00 PM and 7:30 AM.
-    We avoid midnight trading because market spreads get too high.
-    """
-    # Note: Time checking logic is hidden
+    # Note: parsing logic hidden
     return True
 
 def send_telegram_alert(message: str):
-    """Sends simple notifications to my phone via Telegram when a trade opens or closes."""
-    # Note: Telegram API connection code is hidden
+    """Pushes alert to my phone via TG API."""
+    # Note: TG request logic and tokens hidden
     pass
 
-# ==========================================
-# 4. LOT SIZE & TRADE MANAGEMENT
-# ==========================================
-def calculate_lot_size(symbol: str, entry_price: float, stop_loss: float) -> float:
-    """
-    Calculates the exact lot size based on our account balance and stop loss distance.
-    This ensures we never risk more than 5% of our account on a single trade.
-    """
-    # Note: Math formulas for tick value and lot calculation are hidden
-    return 0.01
+# --- 2. RISK MANAGEMENT & SIZING ---
 
-def manage_open_trades():
+def calculate_dynamic_lot_size(symbol: str, entry_price: float, stop_loss: float) -> float:
     """
-    Smart trade management loop that runs 24/7:
-    1. When profit reaches 1.5x our risk, close 25% of the trade to secure profit, 
-       and move Stop Loss to entry price (Break-Even).
-    2. As price moves further in our favor, trail the Stop Loss to lock in more profit.
+    Calculates exact lot size based on balance, tick value, and SL distance.
+    Always caps risk at 3.5%.
     """
-    # Note: Partial close and Stop Loss trailing logic is hidden
+    # Note: Math for tick value and MT5 vol constraints hidden
     pass
 
-# ==========================================
-# 5. TRADING STRATEGIES
-# ==========================================
-def run_trap_hunter_strategy(symbol: str):
+def dynamic_trade_manager():
     """
-    Strategy 1: Trap Hunter (1H / 15M Timeframes)
-    Looks for fake breakouts where retail traders get trapped. We check support/resistance
-    levels and use Volume Profile to confirm where the real money is moving.
+    Runs 24/7 on open trades:
+    - Secures 25% profit at 1:1.5 RR.
+    - Moves SL to BE (Zero Risk).
+    - Trails SL dynamically tracking Fib levels.
     """
-    # Note: Strategy rules and volume calculation are hidden
+    # Note: order_send modification logic hidden
     pass
 
-def run_trend_sniper_strategy(symbol: str):
+# --- 3. TRADING STRATEGIES (CORE LOGIC) ---
+
+def run_s1_reversal_sniper(symbol: str):
     """
-    Strategy 2: Trend Sniper (4H / 1H Timeframes)
-    Trades in the direction of the main trend using the 200 EMA. We wait for a healthy 
-    pullback and enter when we see strong momentum candles.
+    S1: Scans 1H & 15M independently for trend exhaustion.
+    Checks RSI div + large impulse candles (0.8 ATR) + Vol POC.
     """
-    # Note: Trend checking and entry formulas are hidden
+    # Note: Multi-TF analysis and entry logic hidden
     pass
 
-def run_fvg_filler_strategy(symbol: str):
+def run_s2_trap_hunter(symbol: str):
     """
-    Strategy 3: Fair Value Gap (FVG) Filler (4H / 15M Timeframes)
-    Finds market imbalances (gaps left by big bank movements) on the 4H chart and 
-    uses Fibonacci levels on the 15M chart to enter when the gap gets filled.
+    S2: Scans 15M for liquidity grabs/fakeouts.
+    Waits for price to trap retail before entering with the real trend.
     """
-    # Note: Imbalance detection and Fibonacci logic are hidden
+    # Note: S/R logic and 200 EMA confluence hidden
     pass
 
-# ==========================================
-# 6. MAIN BOT LOOP (DEMO STRUCTURE)
-# ==========================================
+def run_s3_trend_sniper(symbol: str):
+    """
+    S3: Rides strong momentum when 4H, 1H, and 15M trends align.
+    Zero-Fib target (2 pips before previous extreme).
+    """
+    # Note: Momentum validation hidden
+    pass
+
+def run_s4_fvg_filler(symbol: str):
+    """
+    S4: Detects Fair Value Gaps on 4H.
+    Uses Golden Fib retracements on 15M to enter on deep pullbacks.
+    """
+    # Note: FVG detection arrays hidden
+    pass
+
+# --- 4. MAIN ENGINE LOOP ---
+
 if __name__ == "__main__":
-    print("Starting EliteMaster Trading Bot (Portfolio Demo Version)...")
-    print("Note: Core trading logic is hidden for privacy.")
-    
-    # This is how the main loop works in the live bot:
+    print("Starting EliteMaster Trading Engine (Portfolio Demo v2.6.1)...")
+    print("Time Guard Active: Trading allowed only between 07:00 - 23:30.")
+    print("Note: Proprietary SMC logic hidden for privacy.")
+
+    # Live execution flow visualization:
     # 
     # if mt5.initialize():
-    #     load_bot_state()  # Load saved memory if bot crashed earlier
+    #     load_bot_state()  
     #     
     #     while True:
-    #         # 1. Scan for new trades only during allowed hours (7:30 AM - 11:00 PM)
-    #         if mt5.positions_total() < MAX_OPEN_TRADES and is_trading_allowed():
-    #             for pair in ["EURUSDm", "GBPUSDm", "USDJPYm"]:
-    #                 run_trap_hunter_strategy(pair)
-    #                 run_trend_sniper_strategy(pair)
-    #                 run_fvg_filler_strategy(pair)
+    #         if is_within_trading_hours():
+    #             run_s1_reversal_sniper(pair)
+    #             run_s2_trap_hunter(pair)
+    #             run_s3_trend_sniper(pair)
+    #             run_s4_fvg_filler(pair)
     #         
-    #         # 2. Check open trades every minute to secure profits and trail SL
-    #         manage_open_trades()
+    #         dynamic_trade_manager() 
     #         time.sleep(60)
